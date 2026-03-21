@@ -7,18 +7,7 @@ on:
   
 
 jobs:
-  Xcode:
-    strategy:
-      fail-fast: false
-      matrix:
-        platform: [
-          "iOS",
-          "macOS,variant=Mac Catalyst",
-        ]
-        destination: [
-          "platform=iOS Simulator,arch=arm64,OS=26.2,name=iPhone 17 Pro",
-          "platform=macOS,arch=arm64,variant=Mac Catalyst,name=My Mac",
-        ]
+  iOS:
     runs-on: macos-26
     steps:
     - name: Checkout
@@ -27,7 +16,7 @@ jobs:
     - name: Build
       env:
         SCHEME: UIPredicateEditor
-        DESTINATION: "generic/platform=${{ matrix.platform }}"
+        DESTINATION: generic/platform=iOS
       shell: bash
       run: |
         xcodebuild \
@@ -39,7 +28,37 @@ jobs:
     - name: Test
       env:
         SCHEME: UIPredicateEditor
-        DESTINATION: ${{ matrix.destination }}
+        DESTINATION: platform=iOS Simulator,arch=arm64,OS=26.2,name=iPhone 17 Pro
+      shell: bash
+      run: |
+        xcodebuild \
+        -scheme "$SCHEME" \
+        -destination "$DESTINATION" \
+        test-without-building \
+        | xcbeautify
+
+  MacCatalyst:
+    runs-on: macos-26
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+      
+    - name: Build
+      env:
+        SCHEME: UIPredicateEditor
+        DESTINATION: generic/platform=macOS,variant=Mac Catalyst
+      shell: bash
+      run: |
+        xcodebuild \
+        -scheme "$SCHEME" \
+        -destination "$DESTINATION" \
+        build \
+        | xcbeautify
+
+    - name: Test
+      env:
+        SCHEME: UIPredicateEditor
+        DESTINATION: platform=macOS,arch=arm64,variant=Mac Catalyst,name=My Mac
       shell: bash
       run: |
         xcodebuild \
