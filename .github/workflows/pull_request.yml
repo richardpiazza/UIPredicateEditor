@@ -1,0 +1,49 @@
+name: Pull Request
+
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  
+
+jobs:
+  Xcode:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [
+          "iOS",
+          "macOS,variant=Mac Catalyst",
+        ]
+        destination: [
+          "platform=iOS Simulator,arch=arm64,OS=26.2,name=iPhone 17 Pro",
+          "platform=macOS,arch=arm64,variant=Mac Catalyst,name=My Mac",
+        ]
+    runs-on: macos-26
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v6
+
+    - name: Build
+      env:
+        SCHEME: UIPredicateEditor
+        DESTINATION: "generic/platform=${{ matrix.platform }}"
+      shell: bash
+      run: |
+        xcodebuild \
+        -scheme "$SCHEME" \
+        -destination "$DESTINATION" \
+        build \
+        | xcbeautify
+
+    - name: Test
+      env:
+        SCHEME: UIPredicateEditor
+        DESTINATION: ${{ matrix.destination }}
+      shell: bash
+      run: |
+        xcodebuild \
+        -scheme "$SCHEME" \
+        -destination "$DESTINATION" \
+        test-without-building \
+        | xcbeautify
