@@ -12,20 +12,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-
-    - name: Build
-      env:
-        SCHEME: UIPredicateEditor
-        DESTINATION: generic/platform=iOS
-      shell: bash
-      run: |
-        xcodebuild \
-        -scheme "$SCHEME" \
-        -destination "$DESTINATION" \
-        build \
-        | xcbeautify
-
-    - name: Test
+    - name: Build & Test
       env:
         SCHEME: UIPredicateEditor
         DESTINATION: platform=iOS Simulator,arch=arm64,OS=26.2,name=iPhone 17 Pro
@@ -34,7 +21,7 @@ jobs:
         xcodebuild \
         -scheme "$SCHEME" \
         -destination "$DESTINATION" \
-        test-without-building \
+        test \
         | xcbeautify
 
   MacCatalyst:
@@ -42,20 +29,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v6
-      
-    - name: Build
-      env:
-        SCHEME: UIPredicateEditor
-        DESTINATION: generic/platform=macOS,variant=Mac Catalyst
-      shell: bash
-      run: |
-        xcodebuild \
-        -scheme "$SCHEME" \
-        -destination "$DESTINATION" \
-        build \
-        | xcbeautify
-
-    - name: Test
+    - name: Build & Test
       env:
         SCHEME: UIPredicateEditor
         DESTINATION: platform=macOS,arch=arm64,variant=Mac Catalyst,name=My Mac
@@ -64,5 +38,5 @@ jobs:
         xcodebuild \
         -scheme "$SCHEME" \
         -destination "$DESTINATION" \
-        test-without-building \
+        test \
         | xcbeautify
