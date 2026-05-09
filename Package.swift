@@ -9,17 +9,31 @@ let package = Package(
   platforms: [
     .iOS(.v18),
     .macCatalyst(.v18),
+    .macOS(.v15),
   ],
   products: [
     .library(
       name: "UIPredicateEditor",
       targets: ["UIPredicateEditor"],
     ),
+    .library(
+      name: "PredicateEditor",
+      targets: [
+        "UIPredicateEditor",
+        "PredicateEditor",
+      ],
+    ),
   ],
   targets: [
     .target(
       name: "UIPredicateEditor",
       resources: [.process("Resources")],
+    ),
+    .target(
+      name: "PredicateEditor",
+      dependencies: [
+        "UIPredicateEditor",
+      ],
     ),
     .testTarget(
       name: "UIPredicateEditorTests",
